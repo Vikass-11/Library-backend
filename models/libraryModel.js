@@ -20,7 +20,7 @@ async function getBookById(id){
 }
 async function getAllAuthors(){
     try{
-        const response= await axios.get(`${BASE_URL}/api/author`);
+        const response= await axios.get(`${BASE_URL}/api/authors`);
         return response.data;
     } catch (error){
         console.error('Error fetching all authors:', error);
