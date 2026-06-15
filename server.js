@@ -21,6 +21,9 @@ const limiter = rateLimit({
 app.use(requestLogger);
 app.use(limiter);
 app.use('/api', libraryRoutes);
+app.use((req,res)=>{
+  res.status(404).json({error:"Route not found", path: req.originalUrl});
+});
 function errorHandler(err, req, res, next) {
   console.error(err.stack);  // or err.message — for your own debugging
   res.status(500).json({ error: "Something went wrong", message: err.message });
