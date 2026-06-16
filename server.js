@@ -1,7 +1,10 @@
 const express = require('express');
 const rateLimit = require('express-rate-limit');
-const PORT = 3000;
+require('dotenv').config();
 const app = express();
+const PORT = process.env.PORT || 3000;
+const connectDB = require('./config/db.js');
+const authRoutes = require('./routes/authRoutes.js');
 const libraryRoutes = require('./routes/libraryRoutes.js');
 
 function requestLogger(req, res, next) {
@@ -20,6 +23,8 @@ const limiter = rateLimit({
 
 app.use(requestLogger);
 app.use(limiter);
+app.use(express.json());
+app.use(authRoutes);
 app.use('/api', libraryRoutes);
 app.use((req,res)=>{
   res.status(404).json({error:"Route not found", path: req.originalUrl});
@@ -29,4 +34,6 @@ function errorHandler(err, req, res, next) {
   res.status(500).json({ error: "Something went wrong", message: err.message });
 }
 app.use(errorHandler);
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+connectDB().then(() => {
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+});
