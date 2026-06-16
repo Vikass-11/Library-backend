@@ -1,27 +1,43 @@
-const libraryModel= require('../models/libraryModel.js');
-async function getAllBooks(req,res,next){
-    try{
-        const books= await libraryModel.getAllBooks();
+const libraryModel = require('../models/libraryModel.js');
+
+async function getAllBooks(req, res, next) {
+    try {
+        const books = await libraryModel.getAllBooks();
         res.json(books);
-    } catch (error){
+    } catch (error) {
         next(error);
     }
 }
-async function getBookById(req,res,next){
-    const id=req.params.id;
-    try{
-        const book= await libraryModel.getBookById(id);
+
+async function createBook(req, res, next) {
+    try {
+        res.status(201).json({
+            message: 'Book creation endpoint accessible by admin only',
+            book: req.body,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function getBookById(req, res, next) {
+    const id = req.params.id;
+
+    try {
+        const book = await libraryModel.getBookById(id);
         res.json(book);
-    } catch (error){
+    } catch (error) {
         next(error);
     }
 }
-async function getAllAuthors(req,res,next){
-    try{
-        const authors= await libraryModel.getAllAuthors();
+
+async function getAllAuthors(req, res, next) {
+    try {
+        const authors = await libraryModel.getAllAuthors();
         res.json(authors);
-    } catch (error){
+    } catch (error) {
         next(error);
     }
 }
-module.exports={getAllBooks, getBookById, getAllAuthors};
+
+module.exports = { getAllBooks, createBook, getBookById, getAllAuthors };

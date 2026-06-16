@@ -25,7 +25,10 @@ const verifyToken = (req, res, next) => {
 const authorizeRole = (allowedRoles) => {
     return (req, res, next) => {
         if (!req.user) {
-            return res.status(401).json({ error: 'Unauthorized', message: 'User not authenticated' });
+            return res.status(401).json({ 
+                error: 'Unauthorized', 
+                message: 'User not authenticated', 
+            });
         }
 
         if (!allowedRoles.includes(req.user.role)) {
@@ -36,4 +39,27 @@ const authorizeRole = (allowedRoles) => {
     };
 };
 
-module.exports = { verifyToken, authorizeRole };
+const authorizeByRoleAndMethod = (req, res, next) => {
+    if (!req.user) {
+        return res.status(401).json({
+            error: 'Unauthorized',
+            message: 'User not authenticated',
+        });
+    }
+
+    if (req.user.role === 'admin') {
+        return next();
+    }
+
+    if (req.user.role === 'member' && req.method === 'GET') {
+        return next();
+    }
+
+    return res.status(403).json({
+        error: 'Forbidden',
+        message: 'Members can only access read endpoints',
+    });
+};
+
+module.exports = { verifyToken, authorizeRole, authorizeByRoleAndMethod };
+
